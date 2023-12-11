@@ -6,6 +6,10 @@ TagManager:
   tags:
   - DnDDestination
   - Obj
+  - Wall
+  - Point
+  - Start
+  - End
   layers:
   - Default
   - TransparentFX
