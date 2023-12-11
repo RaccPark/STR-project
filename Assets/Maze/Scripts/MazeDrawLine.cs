@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngineInternal;
@@ -16,6 +17,7 @@ public class MazeDrawLine : MonoBehaviour
     private Vector3 endPos;
     private Vector3 dir;
     private bool isStarted;
+    private bool isEnded;
 
     // Start is called before the first frame update
     void Start()
@@ -23,6 +25,7 @@ public class MazeDrawLine : MonoBehaviour
         // Var Settings
         positions = new List<Vector3>();
         isStarted = false;
+        isEnded = false;
 
         // lineRendere Settings
         lineRenderer = gameObject.GetComponent<LineRenderer>();
@@ -59,9 +62,19 @@ public class MazeDrawLine : MonoBehaviour
                     isStarted = true;
                     hit2.collider.gameObject.GetComponent<BoxCollider2D>().enabled = false;
                 }
+                else if(hit2.collider.CompareTag("End") && isStarted == true)
+                {
+                    Debug.Log("END");
+                    isEnded = true;
+                    hit2.collider.gameObject.GetComponent<BoxCollider2D>().enabled = false;
+                    setLine();
+                    /*
+                    미로의 끝에 다다렀을 때 실행할 코드부분
+                     */
+                }
             }
 
-            if (isStarted)
+            if (isStarted && !isEnded)
             {
                 Debug.Log(positions.Count);
                 if (positions.Count > 0)
@@ -75,20 +88,17 @@ public class MazeDrawLine : MonoBehaviour
                         if (hit.rigidbody.CompareTag("Point"))
                         {
                             lineRenderer.SetColors(new Color(1, 0, 0), new Color(1, 0, 0));
-                            positions.Add(mousePos);
                             setLine();
                         }
                     }
                     else
                     {
-                        positions.Add(mousePos);
                         setLine();
                     }
 
                 }
                 else
                 {
-                    positions.Add(mousePos);
                     setLine();
                 }
             }
@@ -98,6 +108,7 @@ public class MazeDrawLine : MonoBehaviour
 
     private void setLine()
     {
+        positions.Add(mousePos);
         lineRenderer.positionCount = positions.Count;
         lineRenderer.SetPositions(positions.ToArray());
     }
